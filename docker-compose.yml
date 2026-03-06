@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # Redis服务
+  redis:
+    image: redis:7-alpine
+    container_name: cyber_union_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # 后端服务
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: cyber_union_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - ENV=production
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+      - SQLITE_URL=sqlite+aiosqlite:///data/cyber_union.db
+      - API_SECRET_KEY=${API_SECRET_KEY:-default_secret}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - CLAUDE_API_KEY=${CLAUDE_API_KEY:-}
+      - DOUBAO_API_KEY=${DOUBAO_API_KEY:-}
+    volumes:
+      - ./data:/app/data               # SQLite数据持久化
+      - ./logs:/app/logs               # 日志持久化
+      - ./plugin_files:/app/plugin_files # 插件文件目录
+      - ./config.json:/app/config.json # 配置文件热更新（可选）
+    command: >
+      sh -c "
+        python scripts/init_demo.py &&
+        uvicorn app.main:app --host 0.0.0.0 --port 8000
+      "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # 前端服务
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: cyber_union_frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      - VITE_API_BASE_URL=/api/v1
+      - VITE_API_KEY=${API_SECRET_KEY:-default_secret}
+    # 无需卷，静态文件已打包
+
+volumes:
+  redis_data:
+    driver: local

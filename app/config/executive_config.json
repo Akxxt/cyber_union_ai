@@ -1,0 +1,95 @@
+{
+  "permissions": {
+    "PRESIDENT": {
+      "allowed_nodes": ["president_plan", "president_inspect"],
+      "allowed_data": ["bill", "review_comment", "sub_tasks"],
+      "prompt_templates": ["president_plan", "president_inspect"]
+    },
+    "CONGRESS": {
+      "allowed_nodes": ["congress_legislate", "congress_approve_plan", "congress_accept"],
+      "allowed_data": ["bill", "plan", "execution_report"],
+      "prompt_templates": ["congress_legislate", "congress_approve_plan", "congress_accept"]
+    },
+    "SUPREME_COURT": {
+      "allowed_nodes": ["supreme_court_review_1", "supreme_court_review_2", "supreme_court_final"],
+      "allowed_data": ["bill", "plan", "execution_report"],
+      "prompt_templates": ["supreme_court_review"]
+    },
+    "OPM": {
+      "allowed_nodes": [],
+      "allowed_data": [],
+      "prompt_templates": []
+    },
+    "OMB": {
+      "allowed_nodes": [],
+      "allowed_data": [],
+      "prompt_templates": []
+    },
+    "WHITE_HOUSE_OFFICE": {
+      "allowed_nodes": ["white_house_sort"],
+      "allowed_data": ["input"],
+      "prompt_templates": ["white_house_sort"]
+    },
+    "ENERGY_DEPARTMENT": {
+      "allowed_nodes": ["cabinet_execute"],
+      "allowed_data": ["plan", "sub_tasks"],
+      "prompt_templates": ["cabinet_execute"]
+    },
+    "TREASURY": {
+      "allowed_nodes": ["cabinet_execute"],
+      "allowed_data": ["plan", "sub_tasks"],
+      "prompt_templates": ["cabinet_execute"]
+    },
+    "STATE_DEPARTMENT": {
+      "allowed_nodes": ["cabinet_execute"],
+      "allowed_data": ["plan", "sub_tasks"],
+      "prompt_templates": ["cabinet_execute"]
+    },
+    "JUSTICE_DEPARTMENT": {
+      "allowed_nodes": ["cabinet_execute"],
+      "allowed_data": ["plan", "sub_tasks"],
+      "prompt_templates": ["cabinet_execute"]
+    },
+    "DHS": {
+      "allowed_nodes": ["cabinet_execute"],
+      "allowed_data": ["plan", "sub_tasks"],
+      "prompt_templates": ["cabinet_execute"]
+    },
+    "CIA_FBI": {
+      "allowed_nodes": ["cabinet_execute"],
+      "allowed_data": ["plan", "sub_tasks"],
+      "prompt_templates": ["cabinet_execute"]
+    },
+    "REGULATORS": {
+      "allowed_nodes": ["cabinet_execute"],
+      "allowed_data": ["plan", "sub_tasks"],
+      "prompt_templates": ["cabinet_execute"]
+    }
+  },
+  "plan_template": "方案目标：{goal}\n执行步骤：{steps}\n责任部门：{departments}\n时间节点：{timeline}\n验收标准：{criteria}",
+  "department_mapping": {
+    "能源": "ENERGY_DEPARTMENT",
+    "财政": "TREASURY",
+    "外交": "STATE_DEPARTMENT",
+    "司法": "JUSTICE_DEPARTMENT",
+    "国土安全": "DHS",
+    "情报": "CIA_FBI",
+    "监管": "REGULATORS"
+  },
+  "default_timeline": "30天",
+  "default_criteria": "符合预期效果",
+  "cabinet_config": {
+    "max_workers": 5,
+    "execution_timeout": 60,
+    "retry_max_times": 3,
+    "execution_templates": {
+      "ENERGY_DEPARTMENT": "执行内容：{task}\n执行结果：已完成能源项目\n完成状态：成功\n后续建议：无",
+      "TREASURY": "执行内容：{task}\n执行结果：资金已拨付\n完成状态：成功\n后续建议：跟踪",
+      "STATE_DEPARTMENT": "执行内容：{task}\n执行结果：外交已处理\n完成状态：成功\n后续建议：等待回应",
+      "JUSTICE_DEPARTMENT": "执行内容：{task}\n执行结果：司法已执行\n完成状态：成功\n后续建议：监督",
+      "DHS": "执行内容：{task}\n执行结果：安全已保障\n完成状态：成功\n后续建议：持续监控",
+      "CIA_FBI": "执行内容：{task}\n执行结果：情报已收集\n完成状态：成功\n后续建议：预警",
+      "REGULATORS": "执行内容：{task}\n执行结果：监管已完成\n完成状态：成功\n后续建议：整改"
+    }
+  }
+}
